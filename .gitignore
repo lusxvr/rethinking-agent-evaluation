@@ -1,0 +1,25 @@
+runs/
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.env
+.claude/
+models/*/agent/weights/
+tasks/*/data/
+solutions/*/dev/results/
+*.sif
+/analysis/
+
+slurm/logs/*
+!slurm/logs/.gitkeep
+# Keep slurm/logs/debug/ itself (non-grid logs); a nested un-ignore needs its own pattern.
+!slurm/logs/debug/
+slurm/logs/debug/*
+!slurm/logs/debug/.gitkeep
+
+# Also match runs/ and slurm/logs/ when they are symlinks; trailing-slash patterns do not.
+/runs
+/slurm/logs
+scripts/taxonomy/stage1_output/
+scripts/taxonomy/stage2_output/

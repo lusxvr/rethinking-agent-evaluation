@@ -1,0 +1,14 @@
+[project]
+name = "agent-base-env"
+version = "0.1.0"
+description = "The agent's default workspace env, baked into agent.sif -- see agent/tools.py. torch/transformers/accelerate pins match models/astrosage/agent/env/pyproject.toml."
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "scipy",
+    "torch==2.9.0",
+    "transformers>=4.57.0",
+    "accelerate>=1.11.0",
+]

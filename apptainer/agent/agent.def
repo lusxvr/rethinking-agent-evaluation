@@ -1,0 +1,38 @@
+Bootstrap: docker
+From: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+%files
+    pyproject.toml /app/pyproject.toml
+    uv.lock /app/uv.lock
+    agent /app/agent
+    agent/base_env/pyproject.toml /base_env/pyproject.toml
+    agent/base_env/uv.lock /base_env/uv.lock
+
+%post
+    set -e
+
+    # Run apt as root; --fakeroot without /etc/subuid cannot drop privileges to _apt.
+    echo 'APT::Sandbox::User "root";' > /etc/apt/apt.conf.d/99no-sandbox
+
+    # triton JIT-compiles a C extension at runtime, so GPU inference needs gcc.
+    apt-get update && apt-get install -y --no-install-recommends git curl gcc libc6-dev \
+        && rm -rf /var/lib/apt/lists/*
+
+    cd /app
+    uv sync --frozen --no-dev --no-install-project
+    mkdir -p /agent_run/workspace /task/data /models /uv_cache
+
+    # Default run_bash env (agent/base_env). No GPU at build time; CUDA is checked at runtime.
+    cd /base_env
+    UV_PROJECT_ENVIRONMENT=/opt/agent-base-env/.venv uv sync --frozen --no-dev --no-install-project
+    cd /app
+
+%environment
+    export PATH="/app/.venv/bin:${PATH}"
+    export UV_PROJECT_ENVIRONMENT=/app/.venv
+    export PYTHONUNBUFFERED=1
+
+%runscript
+    # agent resolves as a module only from /app.
+    cd /app
+    exec python -m agent.cli "$@"

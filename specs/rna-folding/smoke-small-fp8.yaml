@@ -1,0 +1,9 @@
+# All 4 information levels; 2 replicates are too few to judge the ladder (see models/rinalmo/README.md).
+task: rna-folding
+axes:
+  information: [none, identity, interface, protocol]
+  harness: [react]
+  verification: [asked]
+  budget: [medium]
+  model: [qwen35-35b-a3b-fp8]
+replicates: 2

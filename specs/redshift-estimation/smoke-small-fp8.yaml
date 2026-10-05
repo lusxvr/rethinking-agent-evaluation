@@ -1,0 +1,8 @@
+task: redshift-estimation
+axes:
+  information: [none, protocol]
+  harness: [react]
+  verification: [asked]
+  budget: [short]
+  model: [qwen35-35b-a3b-fp8]
+replicates: 2

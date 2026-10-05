@@ -1,0 +1,8 @@
+task: promoter-prediction
+axes:
+  information: [none, protocol]
+  harness: [react]
+  verification: [asked]
+  budget: [medium]
+  model: [qwen35-35b-a3b-fp8]
+replicates: 2

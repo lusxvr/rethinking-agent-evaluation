@@ -1,0 +1,28 @@
+[project]
+name = "astrosage-env"
+version = "0.1.0"
+description = "Pinned working environment for loading and running AstroMLab/AstroSage-8B via transformers"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "torch==2.9.0",
+    "transformers>=4.57.0",
+    "accelerate>=1.11.0",
+    "safetensors>=0.6.2",
+]
+
+# PyPI's default aarch64 wheel for torch is CPU-only for every version before 2.11 (confirmed
+# directly: pip resolves a 104MB torch==2.9.0 wheel from plain PyPI here vs. a real 548MB
+# CUDA-enabled build from the index below) -- unlike x86_64, where the default PyPI wheel already
+# bundles CUDA, so this never showed up on Helmholtz. Routes torch to PyTorch's own cu128 index
+# ONLY on aarch64 (JUPITER's Grace-Hopper nodes); x86_64 (Helmholtz) keeps resolving from plain
+# PyPI unchanged. Confirmed a real aarch64+cu128 wheel exists for this exact pinned 2.9.0.
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu128", marker = "platform_machine == 'aarch64'" },
+]

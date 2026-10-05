@@ -1,0 +1,51 @@
+[project]
+name = "rinalmo-env"
+version = "0.1.0"
+description = "Pinned working environment for loading and running lbcb-sci/RiNALMo"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "torch==2.9.0",
+    "numpy>=1.23.5",
+    "ml_collections>=0.1.1",
+    "packaging>=23.2",
+    "scikit-learn>=1.5.0",
+    "rinalmo",
+    "einops>=0.7.0",
+    "flash-attn",
+]
+
+# RiNALMo isn't on PyPI (github.com/lbcb-sci/RiNALMo). Its own declared deps are loose bounds
+# (torch>=2.0.0 etc.) that resolve cleanly against the pins above -- no --no-deps/post_install.sh
+# needed, unlike astroclip's git dependencies. Only "rinalmo", "rinalmo.data", and "rinalmo.model"
+# are actually packaged by its own pyproject.toml (`rinalmo.utils`, including sec_struct.py's
+# post-processing functions, and `rinalmo.data.downstream`'s training infra are NOT installed by
+# this pip package) -- this environment gives the model class, config, alphabet, and the
+# secondary-structure prediction head only. See tasks/rna-folding/info/protocol.md for
+# the post-processing recipe as literal code instead.
+#
+# flash-attn: rinalmo/model/attention.py imports it unconditionally at module level (even though
+# it's not one of RiNALMo's own declared dependencies), regardless of whether use_flash_attn is
+# actually True. This benchmark always runs with use_flash_attn=False, which never calls into it
+# -- a local stub package (flash_attn_stub/, vendored *inside* agent/env/ rather than at the model
+# root, since build_agent_model_env.sh only bind-mounts agent/env itself into the build container
+# -- a sibling directory wouldn't be visible there) satisfies the import with no CUDA-toolchain
+# flash-attn build needed. dev_env's pyproject.toml points at this same copy rather than
+# duplicating it (dev_env is never containerized, so a cross-directory relative path resolves
+# fine there). See models/rinalmo/README.md.
+#
+# PyPI's default aarch64 wheel for torch is CPU-only for every version before 2.11 (unlike
+# x86_64, where the default PyPI wheel already bundles CUDA) -- routes torch to PyTorch's own
+# cu128 index ONLY on aarch64 (JUPITER's Grace-Hopper nodes); x86_64 (Helmholtz) keeps resolving
+# from plain PyPI unchanged. Same fix as models/astroclip, models/astrosage, models/dnabert-2.
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+rinalmo = { git = "https://github.com/lbcb-sci/RiNALMo.git", rev = "2c2c5c14a5ae609d8c560a5d9ca32e51e0288955" }
+flash-attn = { path = "flash_attn_stub", editable = true }
+torch = [
+    { index = "pytorch-cu128", marker = "platform_machine == 'aarch64'" },
+]

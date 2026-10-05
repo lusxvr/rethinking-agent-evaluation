@@ -1,0 +1,28 @@
+[project]
+name = "dnabert-2-dev-env"
+version = "0.1.0"
+description = "Host-only env for solutions/promoter-prediction/dev scripts and verify.py"
+requires-python = ">=3.12"
+dependencies = [
+    "torch==2.9.0",
+    "transformers>=4.57.0,<5",
+    "accelerate>=1.11.0",
+    "einops>=0.8.0",
+    "datasets>=4.5.1",
+    "scikit-learn>=1.5.0",
+    "python-dotenv>=1.2.2",
+    "openai>=2.0.0,<3",
+    "tqdm>=4.68.4",
+]
+
+# On aarch64, PyPI's torch < 2.11 is CPU-only, so torch comes from PyTorch's cu128 index.
+# x86_64 keeps PyPI.
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu128", marker = "platform_machine == 'aarch64'" },
+]

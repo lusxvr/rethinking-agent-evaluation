@@ -1,0 +1,44 @@
+[project]
+name = "astroclip-env"
+version = "0.1.0"
+description = "Pinned working environment for loading and running polymathic-ai/astroclip"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "torch==2.9.0",
+    "torchvision==0.24.0",
+    "lightning>=2.6.0",
+    "scikit-image>=0.26.0",
+    "h5py>=3.16.0",
+    "joblib>=1.5.0",
+    "matplotlib>=3.10.0",
+    "wandb>=0.28.0",
+    "python-dotenv>=1.2.0",
+    "astropy>=7.0.0",
+    "datasets>=4.0.0",
+    "huggingface_hub>=0.28.0",
+    "jaxtyping>=0.2.0",
+    "omegaconf>=2.3.0",
+    "fvcore>=0.1.5",
+    "iopath>=0.1.10",
+    "scikit-learn>=1.7.0",
+]
+
+# PyPI's default aarch64 wheel for torch/torchvision is CPU-only for every version before torch
+# 2.11 (confirmed directly: pip resolves a 104MB torch==2.9.0 wheel from plain PyPI here vs. a real
+# 548MB CUDA-enabled build from the index below) -- unlike x86_64, where the default PyPI wheel
+# already bundles CUDA, so this never showed up on Helmholtz. Routes both to PyTorch's own cu128
+# index ONLY on aarch64 (JUPITER's Grace-Hopper nodes); x86_64 (Helmholtz) keeps resolving from
+# plain PyPI unchanged. Confirmed real aarch64+cu128 wheels exist for these exact pinned versions.
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu128", marker = "platform_machine == 'aarch64'" },
+]
+torchvision = [
+    { index = "pytorch-cu128", marker = "platform_machine == 'aarch64'" },
+]

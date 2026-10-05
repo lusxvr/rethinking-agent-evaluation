@@ -1,0 +1,9 @@
+task: redshift-estimation
+oracle: true
+axes:
+  information: [none, identity, interface, protocol]
+  harness: [act-only, think-act, react]
+  verification: [none, asked, reported, binding]
+  budget: [short, medium, long]
+  model: [qwen35-122b-a10b-fp8]
+replicates: 5

@@ -1,0 +1,15 @@
+[project]
+name = "astrosage-dev-env"
+version = "0.1.0"
+description = "Host-only env for solutions/mmlu-astronomy/dev scripts and verify.py"
+requires-python = ">=3.12"
+dependencies = [
+    "torch==2.9.0",
+    "transformers>=4.57.0",
+    "accelerate>=1.11.0",
+    "safetensors>=0.6.2",
+    "tqdm>=4.68.4",
+    "datasets>=4.5.1",
+    "openai>=2.0.0",
+    "python-dotenv>=1.2.2",
+]

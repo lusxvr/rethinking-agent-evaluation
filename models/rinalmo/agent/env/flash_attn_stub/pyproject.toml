@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flash-attn"
+version = "0.0.0"
+description = "Stub package -- see models/rinalmo/README.md's flash-attn gotcha"
+
+[tool.setuptools]
+packages = ["flash_attn", "flash_attn.layers"]

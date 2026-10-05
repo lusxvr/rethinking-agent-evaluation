@@ -1,0 +1,34 @@
+[project]
+name = "rinalmo-dev-env"
+version = "0.1.0"
+description = "Host-only env for solutions/rna-folding/dev scripts and verify.py"
+requires-python = ">=3.11"
+dependencies = [
+    "torch==2.9.0",
+    "numpy>=1.23.5",
+    "ml_collections>=0.1.1",
+    "packaging>=23.2",
+    "scikit-learn>=1.5.0",
+    "rinalmo",
+    "einops>=0.7.0",
+    "pandas>=2.0.0",
+    "requests>=2.32.0",
+    "tqdm>=4.68.4",
+    "python-dotenv>=1.2.2",
+    "openai>=2.0.0,<3",
+    "flash-attn",
+]
+
+# flash-attn is imported but unused (use_flash_attn=False); a local stub satisfies the import.
+# On aarch64, torch comes from PyTorch's cu128 index (PyPI's torch < 2.11 is CPU-only).
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+rinalmo = { git = "https://github.com/lbcb-sci/RiNALMo.git", rev = "2c2c5c14a5ae609d8c560a5d9ca32e51e0288955" }
+flash-attn = { path = "../agent/env/flash_attn_stub", editable = true }
+torch = [
+    { index = "pytorch-cu128", marker = "platform_machine == 'aarch64'" },
+]

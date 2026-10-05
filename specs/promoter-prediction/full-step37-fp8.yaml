@@ -1,0 +1,8 @@
+task: promoter-prediction
+axes:
+  information: [none, identity, interface, protocol]
+  harness: [think-act, react]  # Step-3.7 cannot disable thinking (axes.py)
+  verification: [none, asked, reported, binding]
+  budget: [short, medium, long]
+  model: [step37-198b-a11b-fp8]
+replicates: 5
